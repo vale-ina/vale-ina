@@ -1,14 +1,16 @@
-name: "Valentina Cafarelli's Website"
+name: "Valentina C.'s Website"
 output_dir: "."
 navbar:
-  title: "Valentina"
+  title: "My Website"
   left:
-    - text: "Home"
-      href: index.html
-    - text: "Project"
-      href: project.html
-    - text: "About"
-      href: about.html
+    - text: "Introduction"
+      href: introduction.html
+    - text: "Methodology"
+      href: methodology.html
+    - text: "Results"
+      href: results.html
+    - text: "Conclusion"
+      href: conclusion.html
       
 output:
   html_document:
