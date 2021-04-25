@@ -1,0 +1,12 @@
+---
+title: "index"
+author: "Valentina Cafarelli"
+date: "4/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## This website was created to report the findings from homework 9
