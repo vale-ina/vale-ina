@@ -5,26 +5,41 @@ date: "4/25/2021"
 output: html_document
 ---
 
+
+
+
+
+
+
+
+
+### Code for Step (i)
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+#recovering tweets from our chosen people: Boris Johnson and AOC
+library(rtweet)
+library(dplyr)
+
+bj <- get_timeline("BorisJohnson",  n=3200)
+aoc <- get_timeline("aoc", n=3200)
+
+#selecting only relevant variables ('select')
+#selecting only 200 rows from each person (as in the class exercise)
+
+bj %>%  filter(is_retweet=="FALSE") %>% 
+  select("screen_name","text") %>%  #, "created_at"
+  head(200) -> bj2
+
+aoc %>%  filter(is_retweet=="FALSE") %>% 
+  select("screen_name","text") %>%  #, "created_at"
+  head(200) -> aoc2
+
+#creating one file with tweets from both people
+tweets_hw9 <- union(bj2,aoc2)
+
+tweets_hw9 %>% mutate(id = row_number()) %>% rename(author = screen_name, status = text) -> tweets_hw9_v0.2
+
+#exporting file as .csv
+write.csv(tweets_hw9_v0.2, file = "tweets_hw9_tidy.csv")
 ```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
