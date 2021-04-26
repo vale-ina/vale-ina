@@ -13,9 +13,9 @@ navbar:
       href: results.html
     - text: "Conclusion"
       href: conclusion.html
-    - text: "Appendix 1: Code for Step (ii)"
+    - text: "Appendix 1"
       href: appendix1.html
-    - text: "Appendix 2: Code for Step (ii)"
+    - text: "Appendix 2"
       href: appendix2.html
     
       
