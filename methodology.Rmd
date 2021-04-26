@@ -7,7 +7,7 @@ output: html_document
 
 In order to develop our algorithm, we went through two main steps: (i) a first step in R to get twitter data from our selected users (Boris Johnson and AOC) and (ii) a second step in Python to create the predictive algorithm. 
 
-*Actual codes for both steps can be found in Appendix 1 and 2 respectively*
+*Actual codes for both steps can be found in Appendix 1 and 2 respectively.*
 
 **(i) Downloading Twitter data in R**
 
@@ -25,6 +25,6 @@ The output from this step is thus a .csv file including 400 tweets (200 tweets p
 
 In this second step, we adapt a model used in class to develop an algorithm that allows us to predict whether the author of a given tweet was either Boris Johnson or AOC. 
 
-The model takes our output from step (i) as an input. The code then splits the data into training and test data, and creates vectorized representations of the tweets.
+The model takes our output from step (i) as an input. The code then splits the data into training and test data, and creates vectorized representations of the tweets that are subsequently used to train and test the model.
 
-We then compute a few confusion matrices. This will allow us to assess our model later on (see ‘Results’). We also visualize the most used words in the tweets analyzed. Lastly, The last two chunks of code allow us to test manually (1) whether a tweet belongs to one or the other individual; (2) what happens when we test tweets from unrelated users (nor Boris Johnson and AOC).
+We then compute a few confusion matrices. This allows us to assess our model later on (see ‘Results’). We also visualize the most used words in the tweets analyzed. Lastly, The last two chunks of code allow us to test manually (1) whether a tweet belongs to one or the other individual; (2) what happens when we test tweets from unrelated users (neither Boris Johnson nor AOC).

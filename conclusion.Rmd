@@ -5,7 +5,7 @@ date: "4/25/2021"
 output: html_document
 ---
 
-In conclusion, we find that our algorithm is able to predict whether a given tweet was more likely tweeted by Boris Johnson or AOC with an accuracy of about 70%. This is both consistent with the results from the Confusion Matrices and with our manual test. We also found that the algorithm tends to break when we test it with tweets from unrelated users, as it attributes them to the same person (AOC).
+In conclusion, we find that our algorithm is able to predict whether a given tweet was more likely tweeted by Boris Johnson or AOC with an accuracy of about 70%. This is both consistent with the results from the Confusion Matrices and with our manual test. We also found that the algorithm tends to break when we test it with tweets from unrelated users, as it attributes them all to the same person (AOC).
 
              
 
