@@ -13,6 +13,11 @@ navbar:
       href: results.html
     - text: "Conclusion"
       href: conclusion.html
+    - text: "Appendix 1: Code for Step (ii)"
+      href: appendix1.html
+    - text: "Appendix 2: Code for Step (ii)"
+      href: appendix2.html
+    
       
 output:
   html_document:

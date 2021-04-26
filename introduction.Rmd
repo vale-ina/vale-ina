@@ -5,8 +5,12 @@ date: "4/25/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+**Research Question:** How will the Twitter behavior of Boris Johnson and Alexandra Ocasio-Cortez compare and contrast?” 
 
-The scope of our project is to compare tweets by Boris Johnson and Alexandria Ocasio-Cortez (AOC) and develop an algorithm that is able to predict whether a given tweet was more likely tweeted by one or the other.
+The scope of our project is to compare tweets by Boris Johnson and Alexandria Ocasio-Cortez (AOC) and develop an algorithm that is able to predict whether a given tweet was more likely tweeted by one or the other. 
+
+We choose to compare these two individuals because although they are both widely-known politicians, they are reasonably different from each other in their views and thus in the topics and opinions that they share on social media. This is based on a number of factors such as their different political affiliation, their different roles in politics, the fact that they operate in two different countries. 
+
+As the prime minister of the UK, Boris Johnson is heavily involved in international affairs. Although not the President of the US, Alexandra Ocasio-Cortez (AOC) has experienced a great deal of social media attention as a young congresswoman and has weighed in on international issues as well. In addition, Johnson and Ocasio-Cortez are seen by the public as more than politicians, each has become a personality and a representative of politics in their respective nations. As Twitter can be used to say a wide variety of things, both political and not, we aimed to investigate how these two similar yet very different people use the platform. 
+
+In the next Sections, we report our methodology, results, and conclusions in more detail.

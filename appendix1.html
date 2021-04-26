@@ -12,7 +12,7 @@
 <meta name="author" content="Valentina Cafarelli" />
 
 
-<title>results</title>
+<title>appendix1</title>
 
 <script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -317,19 +317,41 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">results</h1>
+<h1 class="title toc-ignore">appendix1</h1>
 <h4 class="author">Valentina Cafarelli</h4>
 <h4 class="date">4/25/2021</h4>
 
 </div>
 
 
-<p>To assess our model, we test it with data that was not included to train the algorithm. We then compute a number of Confusion Matrices and test it with new tweets from the two users as well with tweets from unrelated users.</p>
-<p>Both based on the Confusion Matrices and on our manual test, we find that our algorithm is able to predict whether a given tweet was more likely tweeted by Boris Johnson or AOC with an accuracy of about 70%.</p>
-<p>Moreover, we find that our algorithm is better at predicting tweets by Boris Johnson compared to those by AOC. This is shown by the results in the Confusion Matrices: the chance that the model wrongly attributes a tweet by Boris Johnson to AOC is very low, while the same is not true if we look at the likelihood that the model wrongly attributes a tweet by AOC to Boris Johnson. This could be due to the fact that AOC tweets about a vaster number of topics and that a subset of these are also commonly present in tweets by Boris Johnson; an alternative explanation could use this same argument but with choice of words rather than topics i.e. AOC uses a vaster vocabulary.</p>
-<p>In general, the Confusion Matrices predict with accuracy of about 70% (~66% in the first case, 67% in the second case, 70% in the third case. When testing the model manually, we find a similar level of accuracy: we test 10 tweets (5 by BJ and 5 by AOC) and we find that the model accurately predicts who tweeted each tweet 7 times out of 10 (again, ~70% accuracy).</p>
-<p>When we tested tweets from unrelated users, we notice that the model behaves as expected based on the hypotheses stated above. In fact, since AOC likely uses a wider spectrum of words, many of the tweets were attributed to her by the algorithm. Even Tweets which contain content which would normally be associated with BJ were attributed to AOC, such as for example “Buckingham Palace have released a new picture of Queen Elizabeth in celebration of her 95th birthday”.  In this sense, the model ‘breaks’ when we test it with tweets written by unrelated users.</p>
-<p>Lastly, by looking at the most used words by each politician, we find that both Johnson and AOC commonly commented on a key international issue: “COVID” was one of the most used words in tweets from Ocasio-Cortez and “pandemic” was one of Boris Johnson’s most used words. However, there were also considerable differences which allowed our algorithm to predict which user a Tweet came from. For instance, Johnson is prime minister of the UK and so one of the most common words in his tweets is UK. In all likelihood, if a tweet contains “ UK “, it was issued by Johnson. </p>
+<div id="code-for-step-i" class="section level3">
+<h3>Code for Step (i)</h3>
+<pre class="r"><code>#recovering tweets from our chosen people: Boris Johnson and AOC
+library(rtweet)
+library(dplyr)
+
+bj &lt;- get_timeline(&quot;BorisJohnson&quot;,  n=3200)
+aoc &lt;- get_timeline(&quot;aoc&quot;, n=3200)
+
+#selecting only relevant variables (&#39;select&#39;)
+#selecting only 200 rows from each person (as in the class exercise)
+
+bj %&gt;%  filter(is_retweet==&quot;FALSE&quot;) %&gt;% 
+  select(&quot;screen_name&quot;,&quot;text&quot;) %&gt;%  #, &quot;created_at&quot;
+  head(200) -&gt; bj2
+
+aoc %&gt;%  filter(is_retweet==&quot;FALSE&quot;) %&gt;% 
+  select(&quot;screen_name&quot;,&quot;text&quot;) %&gt;%  #, &quot;created_at&quot;
+  head(200) -&gt; aoc2
+
+#creating one file with tweets from both people
+tweets_hw9 &lt;- union(bj2,aoc2)
+
+tweets_hw9 %&gt;% mutate(id = row_number()) %&gt;% rename(author = screen_name, status = text) -&gt; tweets_hw9_v0.2
+
+#exporting file as .csv
+write.csv(tweets_hw9_v0.2, file = &quot;tweets_hw9_tidy.csv&quot;)</code></pre>
+</div>
 
 
 
