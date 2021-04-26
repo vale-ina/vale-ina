@@ -325,7 +325,7 @@ $(document).ready(function () {
 
 
 <p>In order to develop our algorithm, we went through two main steps: (i) a first step in R to get twitter data from our selected users (Boris Johnson and AOC) and (ii) a second step in Python to create the predictive algorithm.</p>
-<p><em>Actual codes for both steps can be found in Appendix 1 and 2</em></p>
+<p><em>Actual codes for both steps can be found in Appendix 1 and 2 respectively</em></p>
 <p><strong>(i) Downloading Twitter data in R</strong></p>
 <p>In this first step, we download 3,200 tweets by Boris Johnson and AOC respectively. We then exclude retweets, keep only the variables that we are interested in using to develop our algorithm and select a sample of 200 tweets per user. Lastly, we merge these two clean datasets into one in order to create an input file that can be used an input for our algorithm (see ii).</p>
 <p>The output from this step is thus a .csv file including 400 tweets (200 tweets per selected user). The file includes three variables: ‘author’ - the author of the tweet, and thus either Boris Johnson or AOC); ‘status’ - the text of the tweet; ‘id’ - a number associated to each unique row (values 1 to 400).</p>

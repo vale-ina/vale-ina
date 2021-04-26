@@ -1,8 +1,0 @@
----
-title: "appendix2"
-author: "Valentina Cafarelli"
-date: "4/25/2021"
-output: html_document
----
-
-### Code for Step (ii)

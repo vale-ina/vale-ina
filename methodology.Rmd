@@ -7,7 +7,7 @@ output: html_document
 
 In order to develop our algorithm, we went through two main steps: (i) a first step in R to get twitter data from our selected users (Boris Johnson and AOC) and (ii) a second step in Python to create the predictive algorithm. 
 
-*Actual codes for both steps can be found in Appendix 1 and 2*
+*Actual codes for both steps can be found in Appendix 1 and 2 respectively*
 
 **(i) Downloading Twitter data in R**
 
