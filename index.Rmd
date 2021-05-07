@@ -9,4 +9,4 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## This website was created to report the findings from homework 9.
+## This website was created to report the findings from homework 9 and homework 10.

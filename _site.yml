@@ -5,6 +5,8 @@ navbar:
   left:
     - text: ""
       href: index.html
+    - text: "Homework10"
+      href: homework10.html
     - text: "Introduction"
       href: introduction.html
     - text: "Methodology"
@@ -17,6 +19,7 @@ navbar:
       href: appendix1.html
     - text: "Appendix 2"
       href: appendix2.html
+ 
     
       
 output:

@@ -1,0 +1,430 @@
+---
+title: "homework10"
+author: "Valentina Cafarelli"
+date: "5/4/2021"
+output: html_document
+---
+
+## Homework 10
+
+```{r setup, include=FALSE}
+#Loading the dataset and getting rid of the empty row, namely row number 19
+setwd("~/V/penn/Spring2021/516/R")
+library(readxl)
+library(tidyverse)
+library(lubridate)
+library(tinytex)
+library(scales)
+library(data.table)
+library(dplyr)
+library(dbplyr)
+dataset_hw10_0 <- read_excel("hw10.xlsx")
+dataset_hw10 <- dataset_hw10_0 [-(19), ]
+```
+
+--------------------------------------------------------------------------------
+**1) Prepare the data for the network analysis (create a separate edge and node list)**
+
+Creating the Node List containing the IDs and the extroversion variables
+```{r}
+dataset_hw10 %>% select(c(`Q2`, `Q4`)) -> nodelist_hw
+```
+
+```{r}
+nodelist_hw <- nodelist_hw[-(1), ]
+```
+
+```{r}
+nodelist_hw <-  nodelist_hw %>% 
+  rename("ID" = "Q2")
+```
+
+```{r}
+nodelist_hw <-  nodelist_hw %>%  
+  rename("extroversion" = "Q4")
+```
+
+```{r}
+nodelist_hw$`ID` <- as.numeric(nodelist_hw$`ID`)
+nodelist_hw$`extroversion` <- as.numeric(nodelist_hw$`extroversion`)
+```
+
+```{r}
+nodelist_hw <- nodelist_hw %>% 
+  arrange(`ID`)
+```
+
+Dealing with the missing people and setting up a new, adjusted dataset to ensure the command network() can run
+```{r}
+ID <- c(1:40)
+extended <- data.frame(ID)
+```
+
+```{r}
+full_join(extended, nodelist_hw, by="ID") -> nodelist_extended
+```
+
+Creating the Edge List
+```{r}
+edgelist_hw <- dataset_hw10 %>% 
+  select(`Q2`:`Q3_40`)
+```
+
+```{r}
+edgelist_hw <- edgelist_hw[-(1), ]
+```
+
+```{r}
+edgelist_hw <- edgelist_hw %>% 
+  rename(c("Out-tie" = "Q2", "1" = "Q3_1", "2" = "Q3_2", "3" = "Q3_3", "4" = "Q3_4", "5" = "Q3_5", "6" = "Q3_6", "7" = "Q3_7", "8" = "Q3_8", "9" = "Q3_9", "10" = "Q3_10", "11" = "Q3_11", "12" = "Q3_12", "13" = "Q3_13", "14" = "Q3_14", "15" = "Q3_15", "16" = "Q3_16", "17" = "Q3_17", "18" = "Q3_18", "19" = "Q3_19", "20" = "Q3_20", "21" = "Q3_21", "22" = "Q3_22", "23" = "Q3_23", "24" = "Q3_24", "25" = "Q3_25", "26" = "Q3_26", "27" = "Q3_27", "28" = "Q3_28", "29" = "Q3_29", "30" = "Q3_30", "31" = "Q3_31", "32" = "Q3_32", "33" = "Q3_33", "34" = "Q3_34", "35" = "Q3_35", "36" = "Q3_36", "37" = "Q3_37", "38" = "Q3_38", "39" = "Q3_39", "40" = "Q3_40"))
+```
+
+```{r}
+edgelist_pivot <- edgelist_hw %>% 
+  pivot_longer(cols = "1":"40", names_to = "In-tie", values_to = "Tie type") %>% 
+  drop_na()
+```
+
+```{r}
+edgelist_pivot <- edgelist_pivot %>% 
+  separate("Tie type", into = c("1", "2", "3", "4", "5"), sep = ",") %>% 
+  pivot_longer("1":"5", names_to = "Number", values_to = "Tie type", values_drop_na = TRUE) %>% 
+  select(c("Out-tie", "In-tie", "Tie type"))
+```
+
+```{r}
+edgelist_pivot$`Out-tie` <- as.numeric(edgelist_pivot$`Out-tie`)
+edgelist_pivot$`In-tie` <- as.numeric(edgelist_pivot$`In-tie`)
+edgelist_pivot$`Tie type` <- as.numeric(edgelist_pivot$`Tie type`)
+```
+
+```{r}
+edgelist_pivot <- edgelist_pivot %>% 
+  arrange(`Out-tie`)
+```
+
+--------------------------------------------------------------------------------
+**2) Calculate measures of centrality and similarity in networks depending on the type of tie! Which tie type generates the most similar network in terms of introversion? Which tie type is the most dissimilar?**
+
+From Figure 1, we can see that most people are connected to each other. Compared to the dataset used in the lecture, there are not people in this class who are not connected to anyone else.
+
+**Tie Type 1**
+In Figure 3, we look at tie type 1 specifically. Tie type 1 corresponds to "I have texted this person in the last seven days." The central cluster represents the MBDS 516 class as the entire class is part of a Slack group. In addition, the class is currently involved in a group project, meaning that team members are likely communicating on at least a weekly basis. Nodes such as 37, 17, and 39 are likely the additional datapoints added for complexity. Because of the nature of the course, it is unlikely that any students have absolutely no text communication with the wider array of peers in the course. 
+
+The centralization is low-to-moderate (0.1615). This makes sense as there is not a central group of actors to which all members of the class defer and work with. Classmates either work individually or in their groups, the greatest amount of test communication occurs directly in these groups as not all classmates are active in the Slack channel. 
+
+This shows that the class is not effectively sectioned based on level of introversion. This makes sense as much of the class characterizes itself as "middle ground" and those who characterize themselves as introverted or extroverted are not seen as outcasts. Most of the communication in the class occurs in work groups or to the entire class, no communications are intentionally made as a result of a person's level of extroversion. This may not be the case in a network which is more social and less academic, but in the case of this network communication happens largely in order to complete assignments. 
+
+**Tie Type 2**
+In Figure 4, we look at tie type 2. Tie type 2 corresponds to "I have met during my time in MBDS.” 
+Meeting people is particularly interesting because most "face to face" interaction in this course has been via Zoom. Even if group members live in close proximity to one another (in Philadelphia together), they may still choose to meet via Zoom because it is convenient and as a COVID precaution. With that said, people who knew each other before the course began may see each other through other channels or meet socially. A subset of students taking the course is in the MBDS major, while a smaller subset is in other majors (e.g. IPD).
+
+Centralization is higher here (0.1942) because there are many people who "met" node one during the class. This may be a result of the few people that were in the dataset but not necessarily in the class. In addition, it is possible that people misunderstood the question and took "met" to mean made an acquaintance, not met in person. 
+
+Assortativity is low in this case because the question is somewhat ambiguous and because factors such as COVID were more significant than the relative extroversion of each class member.
+
+**Tie Type 3**
+Tie three is "is my friend". This plot (Figure 5) makes sense as no class member is friends with the few extra people added to the dataset, who are all on the periphery. Additionally, irregularity within the primary cluster results from people having differing definitions of "friend". However, since most class members are "middle-ground" extroverted, nearly all will characterize at least one member of the class as a friend, likely someone who they met before taking the course. 
+
+Centralization is low (0.1442) because in such a group of people, it is not often that there is one person who is friends with most if not all members of the group. Especially under COVID circumstances, it is difficult to build friendships with people in a class, especially if not all classmates work together consistently. 
+
+Assortativty is low because when making friends, people consider much more than a person's degree of extroversion. Introverts are friends with extroverts, and viceversa. Other qualities such as shared interests and genuine empathy are more critical. 
+
+**Tie Type 4**
+Tie type four is "I ask for advice/help". The tight nature of this network (Figure 6) can be attributed to the Slack page, where classmates ask the entire class for advice and help with homework assignments. Some ask a lot and some do not, and some ask a lot but do not admit as much. This is why the network is not even tighter. The datapoints on the periphery could be the added people. 
+
+Centralization is mildly higher (0.2955) for this network because in any given class, there will always be students who are particularly knowledgeable in the course material. Many students in the class will turn to these particular students for support.
+
+Assortativity is still low because people do not decide who they will ask for help based on how social the helper is. Their considerations are of if the person will be able to support their efforts. 
+
+**Tie Type 5**
+Tie type five is "ask me for help/advice". This network (Figure 7) resembles the network for tie type four except that it is less tight. This makes sense as people do not always feel compelled to take credit for helping others and see it as just acting in a good-natured way. In any case, it shows that all class members are asked for help. This makes sense as a good amount of the classwork has been collaborative.  
+
+Centralization is unlikely to be an informative statistic in this tie type because the question is directed from the class to each individual, not from each individual to the class as a whole. In this way, it is the inverse of tie type 4. Not many will admit to being asked for help by everyone, even if this is the case.
+
+Similarly, assortativity is not a useful statistic in this tie type.
+
+
+Below, we report all figures and metrics of Centralization, Assortativity for each Tie Type.
+
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Creating a network object for all the possible tie types
+library(network)
+socialnormsnet_hw <- network(edgelist_pivot, vertex.attr = nodelist_extended, matrix.type = "edgelist", ignore.eval = FALSE)
+```
+
+```{r eval=TRUE, echo=FALSE, message=FALSE, include=FALSE}
+summary(socialnormsnet_hw)
+```
+
+**Figure 1:** Plotting the network for all the possible tie types
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+plot(socialnormsnet_hw, vertex.cex = 1)
+```
+
+**Figure 2:** Plotting the network for all the possible tie types with the package igraph
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#detach(package:network)
+library(igraph)
+newnetwork_hw <- graph_from_data_frame(d = edgelist_pivot, vertices = nodelist_extended, directed = TRUE)
+plot(newnetwork_hw, edge.arrow.size = 0.1, vertex.size = 3)
+```
+
+
+
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Creating sub-datasets based on the tie types
+edgelist_pivot_tie_1 <- edgelist_pivot %>% 
+  filter(`Tie type` == 1)
+```
+
+**Figure 3:** Analysis for tie type 1
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#detach(package:network)
+library(igraph)
+newnetwork_tie_1 <- graph_from_data_frame(d = edgelist_pivot_tie_1, vertices = nodelist_extended, directed = TRUE)
+plot(newnetwork_tie_1, edge.arrow.size = 0.1, vertex.size = 3)
+```
+
+**Centrality for tie type 1**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Calculating centrality based tie type 1
+degree(newnetwork_tie_1, mode="in")
+centr_degree(newnetwork_tie_1, mode="in", normalized=T)
+```
+
+**Assortativity: Measuring how similar people are in terms of introversion for Tie Type 1**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Measuring how similar people are in terms of introversion
+node_hw <- nodelist_extended
+node_hw[is.na(node_hw)] <- -1
+
+net_tie_1 <- graph_from_data_frame(d = edgelist_pivot_tie_1, vertices = node_hw, directed = TRUE)
+
+assortativity_degree(net_tie_1, directed=T)
+assortativity(net_tie_1, V(net_tie_1)$extroversion, directed=T)
+```
+
+**Figure 4:** Analysis for tie type 2
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+edgelist_pivot_tie_2 <- edgelist_pivot %>% 
+  filter(`Tie type` == 2)
+```
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#detach(package:network)
+library(igraph)
+newnetwork_tie_2 <- graph_from_data_frame(d = edgelist_pivot_tie_2, vertices = nodelist_extended, directed = TRUE)
+plot(newnetwork_tie_2, edge.arrow.size = 0.1, vertex.size = 3)
+```
+
+**Calculating centrality for tie type 2**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Calculating centrality based tie type 2
+degree(newnetwork_tie_2, mode="in")
+centr_degree(newnetwork_tie_2, mode="in", normalized=T)
+```
+
+**Assortativity: Measuring how similar people are in terms of introversion for Tie Type 2**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Measuring how similar people are in terms of introversion
+node_hw <- nodelist_extended
+node_hw[is.na(node_hw)] <- -1
+
+net_tie_2 <- graph_from_data_frame(d = edgelist_pivot_tie_2, vertices = node_hw, directed = TRUE)
+
+assortativity_degree(net_tie_2, directed=T)
+assortativity(net_tie_2, V(net_tie_2)$extroversion, directed=T)
+```
+
+**Figure 5:** Analysis for tie type 3
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+edgelist_pivot_tie_3 <- edgelist_pivot %>% 
+  filter(`Tie type` == 3)
+```
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#detach(package:network)
+library(igraph)
+newnetwork_tie_3 <- graph_from_data_frame(d = edgelist_pivot_tie_3, vertices = nodelist_extended, directed = TRUE)
+plot(newnetwork_tie_3, edge.arrow.size = 0.1, vertex.size = 3)
+```
+
+**Calculating centrality for tie type 3**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Calculating centrality based tie type 3
+degree(newnetwork_tie_3, mode="in")
+centr_degree(newnetwork_tie_3, mode="in", normalized=T)
+```
+
+**Assortativity: Measuring how similar people are in terms of introversion for Tie Type 3**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Measuring how similar people are in terms of introversion
+node_hw <- nodelist_extended
+node_hw[is.na(node_hw)] <- -1
+
+net_tie_3 <- graph_from_data_frame(d = edgelist_pivot_tie_3, vertices = node_hw, directed = TRUE)
+
+assortativity_degree(net_tie_3, directed=T)
+assortativity(net_tie_3, V(net_tie_3)$extroversion, directed=T)
+```
+
+**Figure 6:** Analysis for tie type 4
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+edgelist_pivot_tie_4 <- edgelist_pivot %>% 
+  filter(`Tie type` == 4)
+```
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#detach(package:network)
+library(igraph)
+newnetwork_tie_4 <- graph_from_data_frame(d = edgelist_pivot_tie_4, vertices = nodelist_extended, directed = TRUE)
+plot(newnetwork_tie_4, edge.arrow.size = 0.1, vertex.size = 3)
+```
+
+**Calculating centrality for tie type 4**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Calculating centrality based tie type 4
+degree(newnetwork_tie_4, mode="in")
+centr_degree(newnetwork_tie_4, mode="in", normalized=T)
+```
+
+**Assortativity: Measuring how similar people are in terms of introversion for Tie Type 4**
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Measuring how similar people are in terms of introversion
+node_hw <- nodelist_extended
+node_hw[is.na(node_hw)] <- -1
+
+net_tie_4 <- graph_from_data_frame(d = edgelist_pivot_tie_4, vertices = node_hw, directed = TRUE)
+
+assortativity_degree(net_tie_4, directed=T)
+assortativity(net_tie_4, V(net_tie_4)$extroversion, directed=T)
+```
+
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+edgelist_pivot_tie_5 <- edgelist_pivot %>% 
+  filter(`Tie type` == 5)
+```
+
+**Figure 7:** Analysis for tie type 5
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#detach(package:network)
+library(igraph)
+newnetwork_tie_5 <- graph_from_data_frame(d = edgelist_pivot_tie_5, vertices = nodelist_extended, directed = TRUE)
+plot(newnetwork_tie_5, edge.arrow.size = 0.1, vertex.size = 3)
+```
+
+**Calculating centrality for tie type 5**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Calculating centrality based tie type 5
+degree(newnetwork_tie_5, mode="in")
+centr_degree(newnetwork_tie_5, mode="in", normalized=T)
+```
+
+**Assortativity: Measuring how similar people are in terms of introversion for Tie Type 5**
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+#Measuring how similar people are in terms of introversion
+node_hw <- nodelist_extended
+node_hw[is.na(node_hw)] <- -1
+
+net_tie_5 <- graph_from_data_frame(d = edgelist_pivot_tie_5, vertices = node_hw, directed = TRUE)
+
+assortativity_degree(net_tie_5, directed=T)
+assortativity(net_tie_5, V(net_tie_5)$extroversion, directed=T)
+```
+
+--------------------------------------------------------------------------------
+**3) Do introverts tend to be at the periphery while extroverts are in the center of the network?**
+
+In order to understand whether extroversion affects network measures, we run three separate regression with 'degree', 'betweenness', and 'closeness' as the dependent variables respectively, and extroversion as the independent variable. Based on the regression results, we do not that extroversion significantly affect any of these measures. However, if we look at Figure 7, 8, and 9 below, it looks like extroverts tend to be in the middle of the network. Additionally, from the figures, it is easy to see that only 3 people in the class consider themselves as purely extroverted, making it hard to base a prediction on such a small sample size. It would be interesting to remove the middle option next time the survey is admistered to see if the results change.
+
+**Calculating the variables 'degree', 'betweenness', and 'closeness' for each person in the class**
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+nodelist_q_3 <- nodelist_extended %>% 
+  mutate(degree = degree <- degree(newnetwork_hw, mode="in")) %>% 
+  mutate(betweenness = betweenness(newnetwork_hw, directed=T, weights=NA)) %>% 
+  mutate(closeness = closeness(newnetwork_hw, mode="all", weights=NA))
+nodelist_q_3
+```
+
+**Predicting the variables 'degree', 'betweenness', and 'closeness' as a function of extroversion** 
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+summary(lm(extroversion ~ degree + betweenness + closeness, data = nodelist_q_3))
+```
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+summary(lm(closeness ~ extroversion, data = nodelist_q_3))
+```
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+summary(lm(betweenness ~ extroversion, data = nodelist_q_3))
+```
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+summary(lm(degree ~ extroversion, data = nodelist_q_3))
+```
+
+
+```{r eval=TRUE, echo=FALSE, message=FALSE, include= FALSE,}
+library(network)
+socialnormsnet_hw_q_3 <- network(edgelist_pivot, vertex.attr = nodelist_q_3, matrix.type = "edgelist", ignore.eval = FALSE)
+summary(socialnormsnet_hw_q_3)
+```
+
+**Figure 7:** Visualizing relationship between closeness and levels of extroversion
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+library(ggraph)
+ggraph(socialnormsnet_hw_q_3, layout = "graphopt") + 
+  geom_edge_link(width = 0.5, colour = "lightgray") +
+  geom_node_point(aes(size = closeness, colour = extroversion)) +
+  geom_node_text(aes(label = ID), repel = TRUE) +
+  scale_color_gradient(low = "blue", high = "red") +
+  theme_graph()
+```
+
+**Figure 8:** Visualizing relationship between degree and levels of extroversion
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+library(ggraph)
+ggraph(socialnormsnet_hw_q_3, layout = "graphopt") + 
+  geom_edge_link(width = 0.5, colour = "lightgray") +
+  geom_node_point(aes(size = degree, colour = extroversion)) +
+  geom_node_text(aes(label = ID), repel = TRUE) +
+  scale_color_gradient(low = "blue", high = "red") +
+  theme_graph()
+```
+
+**Figure 9:** Visualizing relationship between betweeness and levels of extroversion
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+library(ggraph)
+ggraph(socialnormsnet_hw_q_3, layout = "graphopt") + 
+  geom_edge_link(width = 0.5, colour = "lightgray") +
+  geom_node_point(aes(size = betweenness, colour = extroversion)) +
+  geom_node_text(aes(label = ID), repel = TRUE) +
+  scale_color_gradient(low = "blue", high = "red") +
+  theme_graph()
+```
+
+**Acknowledgments**
+
+This work has been done as part of a class project and it’s the result of teamwork by Nicolle Belaunde, Valentina Cafarelli, Jenifer M. Nemoda, Samira Okudo, and Jonathan Zur.
+
+Specifically:
+
+Nicolle Belaunde - Provided general feedback on analysis and interpretation
+
+Valentina Cafarelli - Worked on interpreting the analysis; Worked on final formatting; Provided feedback on analysis
+
+Jenifer M. Nemoda - Worked on polishing the data and coding the analysis; Worked on interpreting the analysis
+
+Samira Okudo -  Provided general feedback on analysis and interpretation
+
+Jonathan Zur - Worked on interpreting the analysis; Provided feedback on analysis
+
+
+
+
+
